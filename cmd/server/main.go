@@ -1,12 +1,12 @@
 package main
 
 import (
-	"context"
-	"log"
 	"flag"
+	"log"
 
-	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
+
+	"github.com/haarshitgarg/BART/pkg/tools"
 )
 
 func main() {
@@ -19,14 +19,9 @@ func main() {
 		server.WithToolCapabilities(true),
 	)
 
-	tool := mcp.NewTool(
-		"example",
-		mcp.WithDescription("An example tool"),
-	)
-	exampleToolHandler := func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-		return mcp.NewToolResultText("Hello, world!"), nil
+	if err := tools.RegisterTools(s); err != nil {
+		log.Fatalf("Failed to register tools: %v", err)
 	}
-	s.AddTool(tool, exampleToolHandler)
 
 	// Start HTTP server on port 8080
 	if *sseMode {
@@ -39,6 +34,7 @@ func main() {
 			log.Fatalf("Server failed: %v", err)
 		}
 	} else {
+		log.Printf("Starting stdio server")
 		if err := server.ServeStdio(s); err != nil {
 			log.Fatalf("Server failed: %v", err)
 		}

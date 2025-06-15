@@ -1,4 +1,4 @@
-module github.com/harshitgarg/mcp-server
+module github.com/haarshitgarg/BART
 
 go 1.23
 
