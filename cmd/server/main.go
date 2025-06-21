@@ -11,7 +11,14 @@ import (
 
 func main() {
 	sseMode := flag.Bool("sse", false, "Run server in SSE mode")
+	httpMode:= flag.Bool("http", false, "Run server in HTTP mode")
+
 	flag.Parse()
+
+	if *sseMode && *httpMode {
+		log.Printf("Cannot set both sse and http mode together. Choose one of http or sse")
+		return
+	}
 	// Create a new MCP server instance
 	s := server.NewMCPServer(
 		"BART Server",
@@ -33,6 +40,15 @@ func main() {
 		if err := sseServer.Start(":8080"); err != nil {
 			log.Fatalf("Server failed: %v", err)
 		}
+	} else if *httpMode {
+		log.Printf("Starting HTTP server on :8080")
+		httpServer := server.NewStreamableHTTPServer(s,
+			server.WithEndpointPath("/mcp"),
+		)
+		if err := httpServer.Start(":8080"); err != nil {
+			log.Fatalf("Server failed: %v", err)
+		}
+		log.Printf("HTTP server started on http://localhost:8080/mcp")
 	} else {
 		log.Printf("Starting stdio server")
 		if err := server.ServeStdio(s); err != nil {

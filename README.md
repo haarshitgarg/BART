@@ -9,6 +9,14 @@ A MCP server for books and research papers
 3. Run the server:
    ```bash
    go run cmd/server/main.go -sse
+
+   OR
+
+   go run cmd/server/main.go -http
+
+   OR 
+
+   go run cmd/server/main.go
    ```
 
 The server will start on port 8080.
